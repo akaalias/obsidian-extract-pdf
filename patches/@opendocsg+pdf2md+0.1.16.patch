@@ -1,5 +1,5 @@
 diff --git a/node_modules/@opendocsg/pdf2md/lib/util/pdf.js b/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
-index 0ed1512..d74e9f6 100644
+index 0ed1512..2cf8408 100644
 --- a/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
 +++ b/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
 @@ -5,7 +5,8 @@ const Page = require('../models/Page')
@@ -24,16 +24,7 @@ index 0ed1512..d74e9f6 100644
    const pages = [...Array(pdfDocument.numPages).keys()].map(
      index => new Page({ index })
    )
-@@ -34,6 +34,8 @@ exports.parse = async function parse (docOptions, callbacks) {
-     const page = await pdfDocument.getPage(j)
-     const textContent = await page.getTextContent()
- 
-+    console.log(textContent);
-+
-     if (Object.keys(pageIndexNumMap).length < 10) {
-       pageIndexNumMap = findPageNumbers(pageIndexNumMap, page.pageIndex, textContent.items)
-     } else {
-@@ -42,7 +44,7 @@ exports.parse = async function parse (docOptions, callbacks) {
+@@ -42,7 +42,7 @@ exports.parse = async function parse (docOptions, callbacks) {
      }
    }
  
@@ -42,11 +33,11 @@ index 0ed1512..d74e9f6 100644
    for (let j = 1; j <= pdfDocument.numPages; j++) {
      const page = await pdfDocument.getPage(j)
  
-@@ -90,6 +92,7 @@ exports.parse = async function parse (docOptions, callbacks) {
+@@ -90,6 +90,7 @@ exports.parse = async function parse (docOptions, callbacks) {
          fontParsed(fonts)
        }
      }
-+  
++
    }
    return {
      fonts,
