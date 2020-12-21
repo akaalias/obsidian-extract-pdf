@@ -4,6 +4,6 @@ export default class ExtractPDFSettings {
 
     constructor() {
         this.createNewFile = true;
-        this.copyToClipboard = false;
+        this.copyToClipboard = true;
     }
 }

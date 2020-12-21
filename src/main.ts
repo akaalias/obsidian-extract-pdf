@@ -94,7 +94,7 @@ export default class ExtractPDFPlugin extends Plugin {
 	}
 
 	async saveToFile(filePath: string, mdString: string) {
-		//If files exists then append conent to existing file
+		//If files exists then append content to existing file
 		const fileExists = await this.app.vault.adapter.exists(filePath);
 		if (fileExists) {
 		} else {
