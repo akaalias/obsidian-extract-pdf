@@ -1,6 +1,6 @@
 import {Plugin, addIcon, Notice} from "obsidian"
-import {parse} from 'node_modules/@opendocsg/pdf2md/lib/util/pdf';
-import {makeTransformations, transform} from 'node_modules/@opendocsg/pdf2md/lib/util/transformations';
+import {parse} from 'node_modules/pdf2md/lib/util/pdf';
+import {makeTransformations, transform} from 'node_modules/pdf2md/lib/util/transformations';
 import pdfjs from 'node_modules/pdfjs-dist/build/pdf';
 import worker from 'node_modules/pdfjs-dist/build/pdf.worker.entry';
 import ExtractPDFSettings from "./ExtractPDFSettings";
@@ -35,7 +35,7 @@ export default class ExtractPDFPlugin extends Plugin {
 		})();
 	}
 
-	async extract() {
+	async extract()  {
 		let activeLeaf: any = this.app.workspace.activeLeaf ?? null
 
 		if (typeof activeLeaf?.view.file == 'undefined') return;
@@ -46,16 +46,20 @@ export default class ExtractPDFPlugin extends Plugin {
 
 		const vaultPath = activeLeaf?.view.file.vault.adapter.basePath;
 		const onlyPath = vaultPath + "/" + pdfPath;
-		const fullPath = "file://" + onlyPath;
+		const theFullPath = "file://" + onlyPath;
+
+		console.log("theFullPath");
+		console.log(theFullPath);
 
 		pdfjs.GlobalWorkerOptions.workerSrc = worker;
 
 		// @ts-ignore
-		var loadingTask = pdfjsLib.getDocument(fullPath);
+		var loadingTask = pdfjsLib.getDocument(theFullPath);
 
 		var resultMD = await loadingTask.promise
 			// @ts-ignore
 			.then(async function (doc) {
+				// make sure that in parse() it's not tryint to re-open another doc!
 				var result = await parse(doc);
 				const {fonts, pages} = result
 				const transformations = makeTransformations(fonts.map)
