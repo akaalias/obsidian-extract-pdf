@@ -36,6 +36,8 @@
     "@opendocsg/pdf2md": "^0.1.16"
   },
   "dependencies": {
-    "electron": "^10.2.0"
-  }
+    "electron": "^10.2.0",
+    "patch-package": "^6.2.2"
+  },
+  "postinstall": "npx patch-package"
 }

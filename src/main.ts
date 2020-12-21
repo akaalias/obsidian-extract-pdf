@@ -33,11 +33,7 @@ export default class ExtractPDFPlugin extends Plugin {
 			.then(async function (doc) {
 				var result = await parse(doc);
 				const { fonts, pages } = result
-
 				const transformations = makeTransformations(fonts.map)
-				console.log("transformations" + transformations);
-
-
 				const parseResult = transform(pages, transformations)
 				const text = parseResult.pages
 					// @ts-ignore

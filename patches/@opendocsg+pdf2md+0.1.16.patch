@@ -1,0 +1,95 @@
+diff --git a/node_modules/@opendocsg/pdf2md/lib/pdf2md.js b/node_modules/@opendocsg/pdf2md/lib/pdf2md.js
+index 895e433..b9bc210 100755
+--- a/node_modules/@opendocsg/pdf2md/lib/pdf2md.js
++++ b/node_modules/@opendocsg/pdf2md/lib/pdf2md.js
+@@ -19,9 +19,18 @@ if (typeof document === 'undefined') {
+  * @returns {string} The Markdown text
+  */
+ module.exports = async function (pdfBuffer, callbacks) {
++  console.log("docOptions: " + pdfBuffer);
++
+   const result = await parse(pdfBuffer, callbacks)
++
++  console.log("result" + result);
++
+   const { fonts, pages } = result
++
+   const transformations = makeTransformations(fonts.map)
++
++  console.log("transformations" + transformations);
++
+   const parseResult = transform(pages, transformations)
+   const text = parseResult.pages
+     .map(page => page.items.join('\n') + '\n')
+diff --git a/node_modules/@opendocsg/pdf2md/lib/util/pdf.js b/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
+index 0ed1512..19cb155 100644
+--- a/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
++++ b/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
+@@ -5,7 +5,10 @@ const Page = require('../models/Page')
+ 
+ const NO_OP = () => {}
+ 
+-exports.parse = async function parse (docOptions, callbacks) {
++exports.parse = async function parse (pdfDocument, callbacks) {
++
++  console.log("Hello from parse");
++
+   const { metadataParsed, pageParsed, fontParsed, documentParsed } = {
+     metadataParsed: NO_OP,
+     pageParsed: NO_OP,
+@@ -13,14 +16,24 @@ exports.parse = async function parse (docOptions, callbacks) {
+     documentParsed: NO_OP,
+     ...(callbacks || {}),
+   }
+-  const pdfDocument = await pdfjs.getDocument(docOptions).promise
++
++  console.log("Before getting doc");
++
++  // var loadingTask = pdfjsLib.getDocument(docOptions);
++  // const pdfDocument = await pdfjs.getDocument(docOptions).promise
++
+   const metadata = await pdfDocument.getMetadata()
+   metadataParsed(metadata)
+ 
++  console.log("After getting metadata");
++
++
+   const pages = [...Array(pdfDocument.numPages).keys()].map(
+     index => new Page({ index })
+   )
+ 
++  console.log("After getting pages");
++
+   documentParsed(pdfDocument, pages)
+ 
+   const fonts = {
+@@ -34,6 +47,8 @@ exports.parse = async function parse (docOptions, callbacks) {
+     const page = await pdfDocument.getPage(j)
+     const textContent = await page.getTextContent()
+ 
++    console.log(textContent);
++
+     if (Object.keys(pageIndexNumMap).length < 10) {
+       pageIndexNumMap = findPageNumbers(pageIndexNumMap, page.pageIndex, textContent.items)
+     } else {
+@@ -42,7 +57,9 @@ exports.parse = async function parse (docOptions, callbacks) {
+     }
+   }
+ 
+-  let pageNum = firstPage.pageNum
++  console.log("After getting pageIndexNumMap");
++
++  let pageNum = 0 // firstPage.pageNum
+   for (let j = 1; j <= pdfDocument.numPages; j++) {
+     const page = await pdfDocument.getPage(j)
+ 
+@@ -90,6 +107,9 @@ exports.parse = async function parse (docOptions, callbacks) {
+         fontParsed(fonts)
+       }
+     }
++
++    console.log("After getting fonts");
++
+   }
+   return {
+     fonts,
