@@ -15,8 +15,10 @@ export default class ExtractPDFPlugin extends Plugin {
 	}
 
 	async extract() {
-
 		let activeLeaf: any = this.app.workspace.activeLeaf ?? null
+
+		if (typeof activeLeaf?.view.file == 'undefined') return;
+
 		let pdfPath = activeLeaf?.view.file.path;
 
 		if(!pdfPath.endsWith(".pdf")) return;
