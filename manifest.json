@@ -1,0 +1,9 @@
+{
+  "id": "extract-pdf-plugin",
+  "name": "Extract PDF",
+  "version": "0.0.1",
+  "description": "Extract PDF text.",
+  "author": "Alexis Rondeau",
+  "authorUrl": "https://publish.obsidian.md/alexisrondeau",
+  "js": "main.js"
+}
