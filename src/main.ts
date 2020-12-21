@@ -15,8 +15,12 @@ export default class ExtractPDFPlugin extends Plugin {
 	}
 
 	async extract() {
+
 		let activeLeaf: any = this.app.workspace.activeLeaf ?? null
 		let pdfPath = activeLeaf?.view.file.path;
+
+		if(!pdfPath.endsWith(".pdf")) return;
+
 		const vaultPath = activeLeaf?.view.file.vault.adapter.basePath;
 		const onlyPath = vaultPath + "/" + pdfPath;
 		const fullPath = "file://" + onlyPath;
@@ -41,8 +45,12 @@ export default class ExtractPDFPlugin extends Plugin {
 				return text;
 			});
 
+		const filePath = pdfPath.replace(".pdf", ".md");
+
 		this.saveToClipboard(resultMD);
-	}
+		await this.saveToFile(filePath, resultMD);
+        await this.app.workspace.openLinkText(filePath, filePath, true);
+    }
 
 	saveToClipboard(data: string) {
 		if (data.length > 0) {
@@ -50,6 +58,15 @@ export default class ExtractPDFPlugin extends Plugin {
 			new Notice("Copied to clipboard!");
 		} else {
 			new Notice( "No text found");
+		}
+	}
+
+	async saveToFile(filePath: string, mdString: string) {
+		//If files exists then append conent to existing file
+		const fileExists = await this.app.vault.adapter.exists(filePath);
+		if (fileExists) {
+		} else {
+			await this.app.vault.create(filePath, mdString);
 		}
 	}
 }
