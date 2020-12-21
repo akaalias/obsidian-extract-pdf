@@ -48,9 +48,6 @@ export default class ExtractPDFPlugin extends Plugin {
 		const onlyPath = vaultPath + "/" + pdfPath;
 		const theFullPath = "file://" + onlyPath;
 
-		console.log("theFullPath");
-		console.log(theFullPath);
-
 		pdfjs.GlobalWorkerOptions.workerSrc = worker;
 
 		// @ts-ignore
