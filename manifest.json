@@ -2,7 +2,7 @@
   "id": "extract-pdf-plugin",
   "name": "Extract PDF",
   "version": "0.0.1",
-  "description": "Extract PDF text.",
+  "description": "Extract the text from PDFs to Markdown .",
   "author": "Alexis Rondeau",
   "authorUrl": "https://publish.obsidian.md/alexisrondeau",
   "js": "main.js"

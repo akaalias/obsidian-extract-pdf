@@ -16,6 +16,7 @@ export default class ExtractPDFSettingsTab extends PluginSettingTab {
         containerEl.empty();
 
         containerEl.createEl("h2", {text: "Extract Highlights Plugin"});
+        containerEl.createEl("p", {text: "When invoked, will parse the currently focused PDF and copy its content to the cilpboard."});
 
         new Setting(containerEl)
             .setName('Create new file')
