@@ -1,4 +1,4 @@
-import {Plugin, addIcon, Notice} from "obsidian"
+import {Plugin, addIcon, Notice, Modal, App} from "obsidian"
 import {parse} from 'node_modules/pdf2md/lib/util/pdf';
 import {makeTransformations, transform} from 'node_modules/pdf2md/lib/util/transformations';
 import pdfjs from 'node_modules/pdfjs-dist/build/pdf';
@@ -10,10 +10,12 @@ addIcon('extract', '<path d="M16 71.25L16 24.5C16 19.8056 19.8056 16 24.5 16L71.
 
 export default class ExtractPDFPlugin extends Plugin {
 	public settings: ExtractPDFSettings;
+	private modal: SampleModal;
 
 	async onload() {
 		this.loadSettings();
 		this.addSettingTab(new ExtractPDFSettingsTab(this.app, this));
+		this.modal = new SampleModal(this.app);
 
 		this.addRibbonIcon('extract', 'Extract PDF', () => {
 			this.extract();
@@ -48,6 +50,9 @@ export default class ExtractPDFPlugin extends Plugin {
 		const onlyPath = vaultPath + "/" + pdfPath;
 		const theFullPath = "file://" + onlyPath;
 
+		this.modal.fileName = pdfPath;
+		this.modal.open();
+
 		pdfjs.GlobalWorkerOptions.workerSrc = worker;
 
 		// @ts-ignore
@@ -79,13 +84,15 @@ export default class ExtractPDFPlugin extends Plugin {
 			await this.saveToFile(filePath, resultMD);
 			await this.app.workspace.openLinkText(filePath, filePath, true);
 		}
-    }
+
+		this.modal.close();
+
+	}
 
 	saveToClipboard(data: string) {
 		if (data.length > 0) {
 			navigator.clipboard.writeText(data);
-			new Notice("Copied to clipboard!");
-		} else {
+  		} else {
 			new Notice( "No text found");
 		}
 	}
@@ -97,5 +104,24 @@ export default class ExtractPDFPlugin extends Plugin {
 		} else {
 			await this.app.vault.create(filePath, mdString);
 		}
+	}
+}
+
+class SampleModal extends Modal {
+	public fileName: string;
+
+	constructor(app: App) {
+		super(app);
+	}
+
+	onOpen() {
+		let {contentEl} = this;
+		contentEl.createEl("h2", {text: "Extract PDF Plugin"});
+		contentEl.createEl("p", {text: 'Processing ' + this.fileName});
+	}
+
+	onClose() {
+		let {contentEl} = this;
+		contentEl.empty();
 	}
 }
