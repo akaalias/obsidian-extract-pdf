@@ -68,8 +68,8 @@ export default class ExtractPDFPlugin extends Plugin {
 				const parseResult = transform(pages, transformations)
 				const text = parseResult.pages
 					// @ts-ignore
-					.map(page => page.items.join('\n') + '\n')
-					.join('')
+					.map(page => page.items.join('\n'))
+					.join('---\n\n')
 
 				return text;
 			});
