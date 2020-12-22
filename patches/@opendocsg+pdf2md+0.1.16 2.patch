@@ -1,0 +1,13 @@
+diff --git a/node_modules/@opendocsg/pdf2md/lib/util/pdf.js b/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
+index 0ed1512..e491a0b 100644
+--- a/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
++++ b/node_modules/@opendocsg/pdf2md/lib/util/pdf.js
+@@ -42,7 +42,7 @@ exports.parse = async function parse (docOptions, callbacks) {
+     }
+   }
+ 
+-  let pageNum = firstPage.pageNum
++  let pageNum = 0; // firstPage.pageNum
+   for (let j = 1; j <= pdfDocument.numPages; j++) {
+     const page = await pdfDocument.getPage(j)
+ 
