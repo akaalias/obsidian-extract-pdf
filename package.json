@@ -1,5 +1,5 @@
 {
-  "name": "extract-highlights-plugin",
+  "name": "extract-pdf-plugin",
   "version": "0.0.1",
   "description": "his is a shortcut-based plugin extracts all ==highlights== in a note into your clipboard",
   "main": "ExtractHighlightsPlugin.js",
