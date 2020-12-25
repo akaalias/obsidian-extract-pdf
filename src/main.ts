@@ -11,13 +11,13 @@ addIcon('extract', '<path d="M16 71.25L16 24.5C16 19.8056 19.8056 16 24.5 16L71.
 export default class ExtractPDFPlugin extends Plugin {
 	public settings: ExtractPDFSettings;
 	private modal: SampleModal;
-
+	
 	async onload() {
 		this.loadSettings();
 		this.addSettingTab(new ExtractPDFSettingsTab(this.app, this));
 		this.modal = new SampleModal(this.app);
 
-		this.addRibbonIcon('extract', 'Extract PDF', () => {
+		this.addRibbonIcon('extract', 'PDF to Markdown', () => {
 			this.extract();
 		});
 	}

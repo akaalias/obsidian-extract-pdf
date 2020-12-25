@@ -1,8 +1,8 @@
 {
-  "id": "extract-pdf-plugin",
-  "name": "Extract PDF",
-  "version": "0.0.1",
-  "description": "Extract the text from PDFs to Markdown .",
+  "id": "pdf-to-markdown-plugin",
+  "name": "PDF to Markdown",
+  "version": "0.0.2",
+  "description": "Save the a PDF's text (headings, paragraphs, lists, etc.) to a Markdown file.",
   "author": "Alexis Rondeau",
   "authorUrl": "https://publish.obsidian.md/alexisrondeau",
   "js": "main.js"

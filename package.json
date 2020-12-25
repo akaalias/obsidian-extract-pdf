@@ -1,8 +1,8 @@
 {
-  "name": "extract-pdf-plugin",
+  "name": "pdf-to-markdown-plugin",
   "version": "0.0.1",
-  "description": "his is a shortcut-based plugin extracts all ==highlights== in a note into your clipboard",
-  "main": "ExtractHighlightsPlugin.js",
+  "description": "Extract the text from a PDF to a Markdown file.",
+  "main": "main.js",
   "type": "module",
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
