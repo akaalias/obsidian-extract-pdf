@@ -65,7 +65,7 @@ export default class ExtractPDFPlugin extends Plugin {
 
 		if(this.settings.createNewFile) {
 			await this.saveToFile(filePath, resultMD);
-			await this.app.workspace.openLinkText(filePath, filePath, true);
+			await this.app.workspace.openLinkText(filePath, '', true);
 		}
 
 		this.modal.close();
