@@ -1,8 +1,7 @@
-import {Plugin, addIcon, Notice, Modal, App} from "obsidian"
+import {Plugin, addIcon, Notice, Modal, App, Workspace} from "obsidian"
 import {parse} from 'node_modules/pdf2md/lib/util/pdf';
 import {makeTransformations, transform} from 'node_modules/pdf2md/lib/util/transformations';
 import pdfjs from 'node_modules/pdfjs-dist/build/pdf';
-import worker from 'node_modules/pdfjs-dist/build/pdf.worker.entry';
 import ExtractPDFSettings from "./ExtractPDFSettings";
 import ExtractPDFSettingsTab from "./ExtractPDFSettingsTab";
 
@@ -10,12 +9,12 @@ addIcon('extract', '<path d="M16 71.25L16 24.5C16 19.8056 19.8056 16 24.5 16L71.
 
 export default class ExtractPDFPlugin extends Plugin {
 	public settings: ExtractPDFSettings;
-	private modal: SampleModal;
-	
+	private modal: ProgressModal;
+
 	async onload() {
 		this.loadSettings();
 		this.addSettingTab(new ExtractPDFSettingsTab(this.app, this));
-		this.modal = new SampleModal(this.app);
+		this.modal = new ProgressModal(this.app);
 
 		this.addRibbonIcon('extract', 'PDF to Markdown', () => {
 			this.extract();
@@ -38,43 +37,27 @@ export default class ExtractPDFPlugin extends Plugin {
 	}
 
 	async extract()  {
-		let activeLeaf: any = this.app.workspace.activeLeaf ?? null
+		let file = this.app.workspace.getActiveFile();
 
-		if (typeof activeLeaf?.view.file == 'undefined') return;
+		if(file === null) return;
+		if(file.extension !== 'pdf') return;
 
-		let pdfPath = activeLeaf?.view.file.path;
+		let arrayBuffer = await this.app.vault.readBinary(file);
+		let doc = await pdfjs.getDocument(arrayBuffer).promise;
 
-		if(!pdfPath.endsWith(".pdf")) return;
-
-		const vaultPath = activeLeaf?.view.file.vault.adapter.basePath;
-		const onlyPath = vaultPath + "/" + pdfPath;
-		const theFullPath = "file://" + onlyPath;
-
-		this.modal.fileName = pdfPath;
+		this.modal.fileName = file.name;
 		this.modal.open();
 
-		pdfjs.GlobalWorkerOptions.workerSrc = worker;
-
-		// @ts-ignore
-		var loadingTask = pdfjsLib.getDocument(theFullPath);
-
-		var resultMD = await loadingTask.promise
+		var result = await parse(doc);
+		const {fonts, pages} = result
+		const transformations = makeTransformations(fonts.map)
+		const parseResult = transform(pages, transformations)
+		const resultMD = parseResult.pages
 			// @ts-ignore
-			.then(async function (doc) {
-				// make sure that in parse() it's not tryint to re-open another doc!
-				var result = await parse(doc);
-				const {fonts, pages} = result
-				const transformations = makeTransformations(fonts.map)
-				const parseResult = transform(pages, transformations)
-				const text = parseResult.pages
-					// @ts-ignore
-					.map(page => page.items.join('\n'))
-					.join('---\n\n')
+			.map(page => page.items.join('\n'))
+			.join('---\n\n')
 
-				return text;
-			});
-
-		const filePath = pdfPath.replace(".pdf", ".md");
+		const filePath = file.name.replace(".pdf", ".md");
 
 		if(this.settings.copyToClipboard) {
 			this.saveToClipboard(resultMD);
@@ -98,16 +81,24 @@ export default class ExtractPDFPlugin extends Plugin {
 	}
 
 	async saveToFile(filePath: string, mdString: string) {
-		//If files exists then append content to existing file
 		const fileExists = await this.app.vault.adapter.exists(filePath);
 		if (fileExists) {
+			await this.appendFile(filePath, mdString);
 		} else {
 			await this.app.vault.create(filePath, mdString);
 		}
 	}
+
+	async appendFile(filePath: string, note: string) {
+		let existingContent = await this.app.vault.adapter.read(filePath);
+		if(existingContent.length > 0) {
+			existingContent = existingContent + '\r\r';
+		}
+		await this.app.vault.adapter.write(filePath, existingContent + note);
+	}
 }
 
-class SampleModal extends Modal {
+class ProgressModal extends Modal {
 	public fileName: string;
 
 	constructor(app: App) {

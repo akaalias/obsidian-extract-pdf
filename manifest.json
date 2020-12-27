@@ -2,7 +2,7 @@
   "id": "pdf-to-markdown-plugin",
   "name": "PDF to Markdown",
   "version": "0.0.2",
-  "description": "Save the a PDF's text (headings, paragraphs, lists, etc.) to a Markdown file.",
+  "description": "Save a PDF's text (headings, paragraphs, lists, etc.) to a Markdown file.",
   "author": "Alexis Rondeau",
   "authorUrl": "https://publish.obsidian.md/alexisrondeau",
   "js": "main.js"
