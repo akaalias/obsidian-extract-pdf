@@ -29,5 +29,18 @@ export default class ExtractPDFSettingsTab extends PluginSettingTab {
                     this.plugin.saveData(this.plugin.settings);
                 }),
             );
+
+
+        new Setting(containerEl)
+            .setName('Copy content to clipboard')
+            .setDesc(
+                'If enabled, will copy the extracted Markdown to your clipboard',
+            )
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.copyToClipboard).onChange((value) => {
+                    this.plugin.settings.copyToClipboard = value;
+                    this.plugin.saveData(this.plugin.settings);
+                }),
+            );
     }
 }
