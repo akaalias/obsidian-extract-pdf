@@ -1,7 +1,7 @@
 import {Plugin, addIcon, Notice, Modal, App, Workspace} from "obsidian"
-import {parse} from 'node_modules/pdf2md/lib/util/pdf';
-import {makeTransformations, transform} from 'node_modules/pdf2md/lib/util/transformations';
-import pdfjs from 'node_modules/pdfjs-dist/build/pdf';
+// import {parse} from 'node_modules/pdf2md/lib/util/pdf';
+// import {makeTransformations, transform} from 'node_modules/pdf2md/lib/util/transformations';
+// import pdfjs from 'node_modules/pdfjs-dist/build/pdf';
 import ExtractPDFSettings from "./ExtractPDFSettings";
 import ExtractPDFSettingsTab from "./ExtractPDFSettingsTab";
 
@@ -37,38 +37,40 @@ export default class ExtractPDFPlugin extends Plugin {
 	}
 
 	async extract()  {
-		let file = this.app.workspace.getActiveFile();
-
-		if(file === null) return;
-		if(file.extension !== 'pdf') return;
-
-		let arrayBuffer = await this.app.vault.readBinary(file);
-		let doc = await pdfjs.getDocument(arrayBuffer).promise;
-
-		this.modal.fileName = file.name;
 		this.modal.open();
 
-		var result = await parse(doc);
-		const {fonts, pages} = result
-		const transformations = makeTransformations(fonts.map)
-		const parseResult = transform(pages, transformations)
-		const resultMD = parseResult.pages
-			// @ts-ignore
-			.map(page => page.items.join('\n'))
-			.join('---\n\n')
-
-		const filePath = file.name.replace(".pdf", ".md");
-
-		if(this.settings.copyToClipboard) {
-			this.saveToClipboard(resultMD);
-		}
-
-		if(this.settings.createNewFile) {
-			await this.saveToFile(filePath, resultMD);
-			await this.app.workspace.openLinkText(filePath, '', true);
-		}
-
-		this.modal.close();
+		// let file = this.app.workspace.getActiveFile();
+		//
+		// if(file === null) return;
+		// if(file.extension !== 'pdf') return;
+		//
+		// let arrayBuffer = await this.app.vault.readBinary(file);
+		// let doc = await pdfjs.getDocument(arrayBuffer).promise;
+		//
+		// this.modal.fileName = file.name;
+		// this.modal.open();
+		//
+		// var result = await parse(doc);
+		// const {fonts, pages} = result
+		// const transformations = makeTransformations(fonts.map)
+		// const parseResult = transform(pages, transformations)
+		// const resultMD = parseResult.pages
+		// 	// @ts-ignore
+		// 	.map(page => page.items.join('\n'))
+		// 	.join('---\n\n')
+		//
+		// const filePath = file.name.replace(".pdf", ".md");
+		//
+		// if(this.settings.copyToClipboard) {
+		// 	this.saveToClipboard(resultMD);
+		// }
+		//
+		// if(this.settings.createNewFile) {
+		// 	await this.saveToFile(filePath, resultMD);
+		// 	await this.app.workspace.openLinkText(filePath, '', true);
+		// }
+		//
+		// this.modal.close();
 
 	}
 
@@ -108,7 +110,7 @@ class ProgressModal extends Modal {
 	onOpen() {
 		let {contentEl} = this;
 		contentEl.createEl("h2", {text: "Extract PDF Plugin"});
-		contentEl.createEl("p", {text: 'Processing ' + this.fileName});
+		contentEl.createEl("p", {text: "I'm sorry but due to an unexpected incompatibility with Obsidian Core PDF handling as of v0.10.8 this plugin is currently disabled. In the meantime, you can use https://pdf2md.morethan.io/ to extract PDF to markdown. I'm sorry for the inconvenience and working on fixing this issue. If you have any questions, please email me at alexis.rondeau@gmail.com! Thank you for your patience, Alexis :)"});
 	}
 
 	onClose() {
