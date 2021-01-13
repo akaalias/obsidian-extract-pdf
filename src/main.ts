@@ -1,7 +1,9 @@
-import {Plugin, addIcon, Notice, Modal, App, Workspace} from "obsidian"
-// import {parse} from 'node_modules/pdf2md/lib/util/pdf';
-// import {makeTransformations, transform} from 'node_modules/pdf2md/lib/util/transformations';
-// import pdfjs from 'node_modules/pdfjs-dist/build/pdf';
+import {Plugin, addIcon, Notice, Modal, App} from "obsidian"
+import {parse} from 'node_modules/pdf2md/lib/util/pdf';
+import {makeTransformations, transform} from 'node_modules/pdf2md/lib/util/transformations';
+import pdfjs from 'node_modules/pdf2md/node_modules/pdfjs-dist/build/pdf';
+import worker from 'node_modules/pdf2md/node_modules/pdfjs-dist/build/pdf.worker.entry';
+
 import ExtractPDFSettings from "./ExtractPDFSettings";
 import ExtractPDFSettingsTab from "./ExtractPDFSettingsTab";
 
@@ -37,40 +39,43 @@ export default class ExtractPDFPlugin extends Plugin {
 	}
 
 	async extract()  {
-		this.modal.open();
-
-		// let file = this.app.workspace.getActiveFile();
-		//
-		// if(file === null) return;
-		// if(file.extension !== 'pdf') return;
-		//
-		// let arrayBuffer = await this.app.vault.readBinary(file);
-		// let doc = await pdfjs.getDocument(arrayBuffer).promise;
-		//
-		// this.modal.fileName = file.name;
 		// this.modal.open();
-		//
-		// var result = await parse(doc);
-		// const {fonts, pages} = result
-		// const transformations = makeTransformations(fonts.map)
-		// const parseResult = transform(pages, transformations)
-		// const resultMD = parseResult.pages
-		// 	// @ts-ignore
-		// 	.map(page => page.items.join('\n'))
-		// 	.join('---\n\n')
-		//
-		// const filePath = file.name.replace(".pdf", ".md");
-		//
-		// if(this.settings.copyToClipboard) {
-		// 	this.saveToClipboard(resultMD);
-		// }
-		//
-		// if(this.settings.createNewFile) {
-		// 	await this.saveToFile(filePath, resultMD);
-		// 	await this.app.workspace.openLinkText(filePath, '', true);
-		// }
-		//
-		// this.modal.close();
+
+		let file = this.app.workspace.getActiveFile();
+
+		if(file === null) return;
+		if(file.extension !== 'pdf') return;
+
+		let arrayBuffer = await this.app.vault.readBinary(file);
+
+		pdfjs.GlobalWorkerOptions.workerSrc = worker;
+
+		let doc = await pdfjs.getDocument(arrayBuffer).promise;
+
+		this.modal.fileName = file.name;
+		// this.modal.open();
+
+		var result = await parse(doc);
+		const {fonts, pages} = result
+		const transformations = makeTransformations(fonts.map)
+		const parseResult = transform(pages, transformations)
+		const resultMD = parseResult.pages
+			// @ts-ignore
+			.map(page => page.items.join('\n'))
+			.join('---\n\n')
+
+		const filePath = file.name.replace(".pdf", ".md");
+
+		if(this.settings.copyToClipboard) {
+			this.saveToClipboard(resultMD);
+		}
+
+		if(this.settings.createNewFile) {
+			await this.saveToFile(filePath, resultMD);
+			await this.app.workspace.openLinkText(filePath, '', true);
+		}
+
+		this.modal.close();
 
 	}
 
