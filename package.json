@@ -27,16 +27,14 @@
     "jsdom-global": "^3.0.2",
     "mocha": "^8.2.1",
     "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",
-    "pdf2md": "https://github.com/akaalias/pdf2md",
     "rollup": "^2.35.1",
     "ts-node": "^9.1.1",
     "tslib": "^1.14.1",
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@opendocsg/pdf2md": "git+https://github.com/akaalias/pdf2md.git",
+    "@opendocsg/pdf2md": "^0.1.21",
     "electron": "^10.2.0",
-    "patch-package": "^6.2.2"
-  },
-  "postinstall": "npx patch-package"
+    "pdfjs-dist": "^2.6.347"
+  }
 }

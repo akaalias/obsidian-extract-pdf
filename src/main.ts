@@ -1,8 +1,10 @@
 import {Plugin, addIcon, Notice, Modal, App} from "obsidian"
-import {parse} from 'node_modules/pdf2md/lib/util/pdf';
-import {makeTransformations, transform} from 'node_modules/pdf2md/lib/util/transformations';
-import pdfjs from 'node_modules/pdf2md/node_modules/pdfjs-dist/build/pdf';
-import worker from 'node_modules/pdf2md/node_modules/pdfjs-dist/build/pdf.worker.entry';
+import * as pdf2md from '@opendocsg/pdf2md'
+// @opendocsg/pdf2md uses the ES5 build of pdfjs-dist.
+// We want to explicitly set the worker for the module,
+// so bring these in as modules
+import pdfjs from 'pdfjs-dist/es5/build/pdf';
+import worker from 'pdfjs-dist/es5/build/pdf.worker.entry';
 
 import ExtractPDFSettings from "./ExtractPDFSettings";
 import ExtractPDFSettingsTab from "./ExtractPDFSettingsTab";
@@ -51,15 +53,7 @@ export default class ExtractPDFPlugin extends Plugin {
 
 		pdfjs.GlobalWorkerOptions.workerSrc = worker;
 
-		let doc = await pdfjs.getDocument(arrayBuffer).promise;
-		var result = await parse(doc);
-		const {fonts, pages} = result
-		const transformations = makeTransformations(fonts.map)
-		const parseResult = transform(pages, transformations)
-		const resultMD = parseResult.pages
-			// @ts-ignore
-			.map(page => page.items.join('\n'))
-			.join('---\n\n')
+		const resultMD = await pdf2md(arrayBuffer)
 
 		const filePath = file.name.replace(".pdf", ".md");
 
