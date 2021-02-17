@@ -41,19 +41,30 @@ export default class ExtractPDFPlugin extends Plugin {
 	}
 
 	async extract()  {
+		// this.modal.open();
+
 		let file = this.app.workspace.getActiveFile();
 
 		if(file === null) return;
 		if(file.extension !== 'pdf') return;
 
-		this.modal.fileName = file.name;
-		this.modal.open();
-
 		let arrayBuffer = await this.app.vault.readBinary(file);
 
 		pdfjs.GlobalWorkerOptions.workerSrc = worker;
 
-		const resultMD = await pdf2md(arrayBuffer)
+		let doc = await pdfjs.getDocument(arrayBuffer).promise;
+
+		this.modal.fileName = file.name;
+		// this.modal.open();
+
+		var result = await parse(doc);
+		const {fonts, pages} = result
+		const transformations = makeTransformations(fonts.map)
+		const parseResult = transform(pages, transformations)
+		const resultMD = parseResult.pages
+			// @ts-ignore
+			.map(page => page.items.join('\n'))
+			.join('---\n\n')
 
 		const filePath = file.name.replace(".pdf", ".md");
 
@@ -106,7 +117,7 @@ class ProgressModal extends Modal {
 	onOpen() {
 		let {contentEl} = this;
 		contentEl.createEl("h2", {text: "Extract PDF Plugin"});
-		contentEl.createEl("p", {text: "Extracting " + this.fileName});
+		contentEl.createEl("p", {text: "I'm sorry but due to an unexpected incompatibility with Obsidian Core PDF handling as of v0.10.8 this plugin is currently disabled. In the meantime, you can use https://pdf2md.morethan.io/ to extract PDF to markdown. I'm sorry for the inconvenience and working on fixing this issue. If you have any questions, please email me at alexis.rondeau@gmail.com! Thank you for your patience, Alexis :)"});
 	}
 
 	onClose() {
