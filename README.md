@@ -4,7 +4,7 @@ Allows you to extract the basic textual content of a PDF into a Markdown file. W
 
 ### Demo
 
-![](https://github.com/akaalias/extract-pdf-obsidian/blob/main/demo.gif?raw=true)
+![](https://github.com/akaalias/obsidian-extract-pdf/blob/master/demo.gif?raw=true)
 
 ### How to use this plugin
 
